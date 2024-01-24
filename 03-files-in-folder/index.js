@@ -28,7 +28,7 @@ fs.readdir(pathToSecret, { withFileTypes: true }, (err, files) => {
             extension +
             ' - ' +
             size +
-            'kb',
+            'b',
         );
       }
     });
