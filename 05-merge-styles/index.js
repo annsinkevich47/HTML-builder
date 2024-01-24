@@ -14,7 +14,10 @@ fs.readdir(pathToStyles, { withFileTypes: true }, (err, files) => {
 
   files.forEach((file) => {
     const name = file.name;
-    if (!file.isFile() || !name.slice(name.length - 3, name.length) === 'css') {
+    if (
+      !file.isFile() ||
+      !(name.slice(name.length - 3, name.length) === 'css')
+    ) {
       return;
     }
     const readableStream = fs.createReadStream(
@@ -22,8 +25,6 @@ fs.readdir(pathToStyles, { withFileTypes: true }, (err, files) => {
       'utf-8',
     );
     readableStream.on('data', (chunk) => arr.push(chunk));
-    readableStream.on('end', () =>
-      writeStream.write(arr.join('').slice(0, -11)),
-    );
+    readableStream.on('end', () => writeStream.write(arr.join('')));
   });
 });

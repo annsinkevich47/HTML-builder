@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { stdin, stdout } = process;
+const { stdin } = process;
 
 const output = fs.createWriteStream(path.join(__dirname, 'text.txt'));
 
@@ -13,7 +13,8 @@ stdin.on('data', (data) => {
   });
 
   if (data.toString().trim() == 'exit') {
-    process.exit(stdout.write('Thank you for entering text!'));
+    console.log('Thank you for entering text!');
+    process.exit();
   }
 
   output.write(data);

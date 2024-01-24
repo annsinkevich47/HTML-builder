@@ -11,17 +11,25 @@ fs.readdir(pathToSecret, { withFileTypes: true }, (err, files) => {
       return;
     }
 
-    const name = file.name.substring(0, file.name.indexOf('.'));
     const extension = path.extname(file.name).slice(1);
-    let size;
     const filePath = path.join(pathToSecret, file.name);
+    const name = path.basename(filePath, extension);
+
+    let size;
 
     fs.stat(filePath, (error, stats) => {
       if (error) {
         console.log(error);
       } else {
         size = stats.size;
-        console.log(name + ' - ' + extension + ' - ' + size + 'kb');
+        console.log(
+          name.slice(0, name.length - 1) +
+            ' - ' +
+            extension +
+            ' - ' +
+            size +
+            'kb',
+        );
       }
     });
   });

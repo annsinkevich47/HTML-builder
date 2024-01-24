@@ -1,0 +1,8 @@
+Parameters: This method accepts three parameters as mentioned above and described below:
+
+    path: It holds the path of the file that has to be removed. It can be a String, Buffer, or URL.
+    options: It is an object that can be used to specify optional parameters that will affect the operation as follows:
+        force: It is a boolean value. Exceptions will be ignored if the path does not exist.
+        recursive: It is a boolean value that specifies if recursive directory removal is performed. In this mode, errors are not reported if the specified path is not found and the operation is retried on failure. The default value is false.
+    callback: It is the function that would be called when the method is executed.
+        err: It is an error that would be thrown if the operation fails.

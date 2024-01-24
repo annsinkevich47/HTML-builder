@@ -1,13 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const pathToArticles = path.join(__dirname, './components/articles.html');
-const pathToFooter = path.join(__dirname, './components/footer.html');
-const pathToHeader = path.join(__dirname, './components/header.html');
+const pathToDir = path.join(__dirname, './components');
+
 let sample = '';
-let articles = '';
-let footer = '';
-let header = '';
+let sampleStart = '';
+let sampleEnd = '';
+let nameTag = '';
 
 const readableStreamTemplate = fs.createReadStream(
   path.join(__dirname, './template.html'),
@@ -18,12 +17,6 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
   if (err) throw err;
 });
 
-const readableStreamArticles = fs.createReadStream(pathToArticles, 'utf-8');
-const readableStreamFooter = fs.createReadStream(pathToFooter, 'utf-8');
-const readableStreamHeader = fs.createReadStream(pathToHeader, 'utf-8');
-readableStreamHeader.on('data', (chunk) => (header += chunk));
-readableStreamArticles.on('data', (chunk) => (articles += chunk));
-readableStreamFooter.on('data', (chunk) => (footer += chunk));
 readableStreamTemplate.on('data', (chunk) => (sample += chunk));
 
 const writeHtml = fs.createWriteStream(
@@ -31,17 +24,23 @@ const writeHtml = fs.createWriteStream(
 );
 
 readableStreamTemplate.on('end', () => {
-  if (sample.includes('{{header}}')) {
-    sample = sample.replace('{{header}}', header);
+  replaceTag();
+  function replaceTag() {
+    sampleStart = sample.indexOf('{{');
+    sampleEnd = sample.indexOf('}}');
+    nameTag = sample.slice(sampleStart + 2, sampleEnd);
+    fs.readFile(path.join(pathToDir, nameTag + '.html'), (err, data) => {
+      if (!err && data) {
+        if (sample.includes('{{')) {
+          sample = sample.replace('{{' + nameTag + '}}', data);
+          replaceTag();
+        }
+        if (!sample.includes('{{')) {
+          writeHtml.write(sample);
+        }
+      }
+    });
   }
-  if (sample.includes('{{articles}}')) {
-    sample = sample.replace('{{articles}}', articles);
-  }
-  if (sample.includes('{{footer}}')) {
-    sample = sample.replace('{{footer}}', footer);
-  }
-  //   console.log(sample);
-  writeHtml.write(sample);
 });
 
 fs.readdir(
